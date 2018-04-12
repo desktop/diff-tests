@@ -1,0 +1,45 @@
+matrix:
+  include:
+    - os: linux
+      language: c
+      env:
+        - TARGET_PLATFORM=ubuntu
+        - GIT_LFS_URL=https://github.com/git-lfs/git-lfs/releases/download/v2.2.1/git-lfs-linux-amd64-2.2.1.tar.gz
+        - GIT_LFS_CHECKSUM=95bcdab9897338fd923ad3a792010d6e817114e8c3b444e1e245889b6cd68888
+
+    - os: osx
+      language: c
+      env:
+       - TARGET_PLATFORM=macOS
+       - GIT_LFS_URL=https://github.com/git-lfs/git-lfs/releases/download/v2.2.1/git-lfs-darwin-amd64-2.2.1.tar.gz
+       - GIT_LFS_CHECKSUM=1da31fa2cc75fe56486cbaf371ca4d233889a8105cc9d9435284a0a7a3c87bec
+
+    - os: linux
+      language: c
+      env:
+       - TARGET_PLATFORM=win32
+       - GIT_FOR_WINDOWS_URL=https://github.com/git-for-windows/git/releases/download/v2.13.3.windows.1/MinGit-2.13.3-64-bit.zip
+       - GIT_FOR_WINDOWS_CHECKSUM=97063e2139cac40f3c8f547b85f031765062581101d69ad468188c9de0b1dca3
+       - GIT_LFS_URL=https://github.com/git-lfs/git-lfs/releases/download/v2.2.1/git-lfs-windows-amd64-2.2.1.zip
+       - GIT_LFS_CHECKSUM=35e120c03061c7a3de8348b970da2278a2e0a865d4c67179801266a2d7674d2d
+
+compiler:
+  - gcc
+
+script:
+  - script/build.sh
+  - script/package.sh
+
+branches:
+  only:
+  - master
+  - /^v[0-9]*.[0-9]*.[0.9]*.*$/
+
+deploy:
+  provider: releases
+  api_key: $GITHUB_TOKEN
+  file_glob: true
+  file: ${TRAVIS_BUILD_DIR}/dugite-native-v*.tar.gz
+  skip_cleanup: true
+  on:
+    tags: true
